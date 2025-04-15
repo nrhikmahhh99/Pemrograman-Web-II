@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html>
 <head>
   <title>Konversi Suhu</title>
@@ -11,61 +10,59 @@
   </style>
 </head>
 <body>
-  <label>Nilai : <input type="number" id="nilai"></label><br>
+  <form method="post" class="form-box">
+    <label>Nilai:
+      <input type="number" name="nilai" step="any" required value="<?= isset($_POST['nilai']) ? htmlspecialchars($_POST['nilai']) : '' ?>">
+    </label>
+    <br>
 
-  Dari :<br>
-  <input type="radio" name="dari" value="C" checked> Celcius<br>
-  <input type="radio" name="dari" value="F"> Fahrenheit<br>
-  <input type="radio" name="dari" value="Re"> Rheamur<br>
-  <input type="radio" name="dari" value="K"> Kelvin<br>
+    Dari:<br>
+    <?php $dari = $_POST['dari'] ?? 'C'; ?>
+    <input type="radio" name="dari" value="C" <?= $dari == 'C' ? 'checked' : '' ?>> Celcius<br>
+    <input type="radio" name="dari" value="F" <?= $dari == 'F' ? 'checked' : '' ?>> Fahrenheit<br>
+    <input type="radio" name="dari" value="Re" <?= $dari == 'Re' ? 'checked' : '' ?>> Rheamur<br>
+    <input type="radio" name="dari" value="K" <?= $dari == 'K' ? 'checked' : '' ?>> Kelvin<br>
 
-  Ke :<br>
-  <input type="radio" name="ke" value="C"> Celcius<br>
-  <input type="radio" name="ke" value="F" checked> Fahrenheit<br>
-  <input type="radio" name="ke" value="Re"> Rheamur<br>
-  <input type="radio" name="ke" value="K"> Kelvin<br>
+    Ke:<br>
+    <?php $ke = $_POST['ke'] ?? 'F'; ?>
+    <input type="radio" name="ke" value="C" <?= $ke == 'C' ? 'checked' : '' ?>> Celcius<br>
+    <input type="radio" name="ke" value="F" <?= $ke == 'F' ? 'checked' : '' ?>> Fahrenheit<br>
+    <input type="radio" name="ke" value="Re" <?= $ke == 'Re' ? 'checked' : '' ?>> Rheamur<br>
+    <input type="radio" name="ke" value="K" <?= $ke == 'K' ? 'checked' : '' ?>> Kelvin<br>
 
-  <button onclick="konversi()">Konversi</button>
+    <button type="submit" name="konversi">Konversi</button>
+  </form>
 
-  <div class="hasil" id="hasilKonversi"></div>
+  <?php
+  if (isset($_POST['konversi'])) {
+    $nilai = floatval($_POST['nilai']);
+    $dari = $_POST['dari'];
+    $ke = $_POST['ke'];
 
-  <script>
-    function konversi() {
-      let nilai = parseFloat(document.getElementById("nilai").value);
-      let dari = document.querySelector('input[name="dari"]:checked').value;
-      let ke = document.querySelector('input[name="ke"]:checked').value;
-      let hasil = 0;
-
-      // Konversi ke Celcius dulu sebagai titik tengah
-      let celcius = 0;
-
-      switch (dari) {
-        case "C": celcius = nilai; break;
-        case "F": celcius = (nilai - 32) * 5/9; break;
-        case "Re": celcius = nilai * 5/4; break;
-        case "K": celcius = nilai - 273.15; break;
-      }
-
-      // Dari Celcius ke target satuan
-      switch (ke) {
-        case "C": hasil = celcius; break;
-        case "F": hasil = (celcius * 9/5) + 32; break;
-        case "Re": hasil = celcius * 4/5; break;
-        case "K": hasil = celcius + 273.15; break;
-      }
-
-      // Satuan akhir
-      let satuan = {
-        "C": "°C",
-        "F": "°F",
-        "Re": "°Re",
-        "K": "K"
-      };
-
-      document.getElementById("hasilKonversi").innerHTML =
-        "Hasil Konversi: " + hasil.toFixed(1) + " " + satuan[ke];
+    switch ($dari) {
+      case 'C': $celcius = $nilai; break;
+      case 'F': $celcius = ($nilai - 32) * 5/9; break;
+      case 'Re': $celcius = $nilai * 5/4; break;
+      case 'K': $celcius = $nilai - 273.15; break;
+      default: $celcius = 0;
     }
-  </script>
 
+    switch ($ke) {
+      case 'C': $hasil = $celcius; break;
+      case 'F': $hasil = ($celcius * 9/5) + 32; break;
+      case 'Re': $hasil = $celcius * 4/5; break;
+      case 'K': $hasil = $celcius + 273.15; break;
+      default: $hasil = 0;
+    }
+
+    $satuan = [
+      'C' => '°C',
+      'F' => '°F',
+      'Re' => '°Re',
+      'K' => 'K'
+    ];
+    echo "<div class='hasil'>Hasil Konversi: " . round($hasil, 1) . " " . $satuan[$ke] . "</div>";
+  }
+  ?>
 </body>
 </html>
